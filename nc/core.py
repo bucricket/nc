@@ -10,7 +10,7 @@ class Action(object):
 
     def __getattr__(self, name):
         try:
-            return self.load('noaaclass.product.%s' % name).api(self)
+            return self.load('nc.product.%s' % name).api(self)
         except Exception, e:
             raise Exception('There is no API to the "%s" product.\n%s'
                             % (name, e))
