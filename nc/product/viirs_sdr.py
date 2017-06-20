@@ -12,7 +12,7 @@ enabled = lambda x: re.match(r'.*%22(.*)%22.*', x).group(1) == 'Y'
 element = lambda t, ptrn, idx: t.select(ptrn)[idx].text
 file_item = lambda row, i: element(row, 'td', i)
 file_data = lambda row: (file_item(row, 3), int(file_item(row, 5)),
-                         file_item(row, 4) == 'VIIRS_SDR')
+                         file_item(row, 4) == 'GVAR_IMG')
 resume_id = lambda t: element(t, 'td a', 0)
 resume_activity = (lambda t:
                    datetime.strptime(element(t, 'td', -1).split('.')[0],
@@ -49,18 +49,21 @@ class api(core.api):
         self.translate(single, 'south', float, 'slat', str)
         self.translate(single, 'west', float, 'wlon', str)
         self.translate(single, 'east', float, 'elon', str)
-        self.translate(multiple, 'datatype', direct, 'Datatype', direct)
-        self.translate(single, 'format', direct, 'format_%s' % self.name, str)
+        self.translate(multiple, 'coverage', direct, 'Coverage', direct)
+        self.translate(multiple, 'schedule', direct, 'Satellite Schedule',
+                       direct)
+        self.translate(multiple, 'satellite', direct, 'Satellite', direct)
         self.translate(multiple, 'channel', int, 'chan_%s' % self.name, str)
+        self.translate(single, 'format', direct, 'format_%s' % self.name, str)
 
     def subscribe_get_append_orders(self, noaa, d, append_files, hours, async):
-        page = noaa.get('order_list?order=%s&type=SUBS&displayDetails=Y'
-                        '&hours=%i&status_page=1&group_size=25&orderby=1' %
-                        (d['id'], hours))
+        page = noaa.get('order_list?display_id=%s&order_type=SUBS&'
+                        'condense=false&hours=%s&page_number=1&'
+                        'group_size=25' % (d['id'], hours))
         d['orders'] = self.initialize_orders(page)
         self.parse_orders(noaa, d['orders'], append_files, hours, async)
 
-    def subscribe_get(self, append_orders=False, append_files=False, hours=1,
+    def subscribe_get(self, append_orders=False, append_files=False, hours=2,
                       async=False):
         # If append_files also automatically should append_orders.
         append_orders = append_files or append_orders
@@ -135,7 +138,7 @@ class api(core.api):
 
     def deduce_head(self, noaa, order, last_response_soup):
         rows = last_response_soup.select('.zebra tr')
-        rows = map(lambda r: r.select('td.oq_changeOrder'),
+        rows = map(lambda r: r.select('td.oq_table_line_item_row'),
                    rows)
         files = filter(lambda f: f,
                        map(lambda t: t[1].getText() if t else t, rows))
@@ -173,8 +176,8 @@ class api(core.api):
                 self.obtain_items(last_response_soup, item, is_ftp))
 
     def parse_orders(self, noaa, orders, append_files, hours, async):
-        urls = [('order_details?order=%s&hours=%i&status_page=1'
-                 '&group_size=1000&orderby=1' % (order['id'], hours))
+        urls = [('order_details?order_number=%s&hours=%i&page_number=1'
+                 '&group_size=1000' % (order['id'], hours))
                 for order in orders]
         responses = noaa.getmultiple(urls, async=async)
         list(map(lambda a, noaa=noaa, append_files=append_files:
@@ -188,7 +191,7 @@ class api(core.api):
         return filter(lambda o: o['status'] != 'delivered',
                       map(resume_order, data))
 
-    def request_get(self, append_files=False, hours=1, async=False):
+    def request_get(self, append_files=False, hours=2, async=False):
         noaa = self.conn
         page = noaa.get('order_list?order=&status=&type=USER'
                         '&displayDetails=N&hours=%i&status_page=1'
@@ -209,9 +212,9 @@ class api(core.api):
         data['start_time'] = e['start'].strftime('%H:%M:%S')
         data['end_date'] = e['end'].strftime('%Y-%m-%d')
         data['end_time'] = e['end'].strftime('%H:%M:%S')
-        data['data_start'] = '2008-04-30'
+        data['data_start'] = '1993-09-01'
         data['data_end'] = datetime.utcnow().strftime('%Y-%m-%d')
-        data['dsname_pattern'] = "^((\w{5})_(NPP|J01)|\w{5}-\w{5}_(NPP|J01))_D20\d\d(0[1-9]|1[012])([012][0-9]|3[01]).*$"
+        data['dsname_pattern'] = "^GOES\d\d\.(19|20)\d\d\.[0123]\d\d(.{0,15})$"
         data['between_through'] = 'T'
         noaa.post('psearch%s' % self.name_upper, data=data,
                   form_name='search_frm')
