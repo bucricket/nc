@@ -1,4 +1,4 @@
-from noaaclass import core
+from nc import core
 import re
 from datetime import datetime, timedelta
 

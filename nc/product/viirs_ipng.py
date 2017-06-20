@@ -5,7 +5,7 @@ Created on Wed Mar 23 09:06:44 2016
 @author: mschull
 """
 
-from noaaclass import core
+from nc import core
 import re
 from datetime import datetime, timedelta
 
