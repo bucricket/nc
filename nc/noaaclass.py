@@ -140,7 +140,8 @@ class Connection(object):
         self.session = requests.Session()
         self.verify = verify
         if username and password:
-            self.base_uri = '://www.nsof.class.noaa.gov/saa/products/'
+#            self.base_uri = '://www.nsof.class.noaa.gov/saa/products/'
+            self.base_uri = '://www.class.ncdc.noaa.gov/saa/products/'
             self.authenticate = Auth(username, password)
             self.get('welcome')
             self.translator = Translator()
@@ -148,7 +149,8 @@ class Connection(object):
             self.request = Request(self)
             self.subscribe = Subscribe(self)
         else:
-            self.base_uri = '://www.nsof.class.noaa.gov'
+#            self.base_uri = '://www.nsof.class.noaa.gov'
+            self.base_uri = '://www.class.ncdc.noaa.gov'
 
     def next_up_datetime(self):
         end = datetime.utcnow()
