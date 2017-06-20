@@ -11,7 +11,8 @@ setup(
     author="Mitchell Schull",
     author_email="mitch.schull@noaa.gov",
     url="https://github.com/bucricket/nc.git",
-    packages = ['nc', 'nc.product'],
+    packages = ['nc'],
+    py_modules = ['nc.product.viirs_sdr','nc.product.viirs_ipng'],
     platforms='Posix; MacOS X; Windows',
     license='BSD 3-Clause',
     classifiers=[
