@@ -203,7 +203,7 @@ class api(core.api):
         orders.sort(key=key)
         return orders
 
-    def request_new(self, e):
+def request_new(self, e):
         noaa = self.conn
         noaa.get('search?sub_id=0&datatype_family=%s&submit.x=23&submit.y=7' %
                  self.name_upper)
@@ -212,9 +212,9 @@ class api(core.api):
         data['start_time'] = e['start'].strftime('%H:%M:%S')
         data['end_date'] = e['end'].strftime('%Y-%m-%d')
         data['end_time'] = e['end'].strftime('%H:%M:%S')
-        data['data_start'] = '1993-09-01'
+        data['data_start'] = '2008-04-30'
         data['data_end'] = datetime.utcnow().strftime('%Y-%m-%d')
-        data['dsname_pattern'] = "^GOES\d\d\.(19|20)\d\d\.[0123]\d\d(.{0,15})$"
+        data['dsname_pattern'] = "^((\w{5})_(NPP|J01)|\w{5}-\w{5}_(NPP|J01))_D20\d\d(0[1-9]|1[012])([012][0-9]|3[01]).*$"
         data['between_through'] = 'T'
         noaa.post('psearch%s' % self.name_upper, data=data,
                   form_name='search_frm')
