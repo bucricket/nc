@@ -203,7 +203,7 @@ class api(core.api):
         orders.sort(key=key)
         return orders
 
-def request_new(self, e):
+    def request_new(self, e):
         noaa = self.conn
         noaa.get('search?sub_id=0&datatype_family=%s&submit.x=23&submit.y=7' %
                  self.name_upper)
