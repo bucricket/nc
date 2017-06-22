@@ -202,7 +202,9 @@ class api(core.api):
 
     def request_new(self, e):
         noaa = self.conn
-        noaa.get('search?sub_id=0&datatype_family=%s&submit.x=23&submit.y=7' %
+#        noaa.get('search?sub_id=0&datatype_family=%s&submit.x=23&submit.y=7' %
+#                 self.name_upper)
+        noaa.get('search?sub_id=0&datatype_family=%s' %
                  self.name_upper)
         data = self.local_to_post(e)
         data['start_date'] = e['start'].strftime('%Y-%m-%d')
