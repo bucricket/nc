@@ -208,7 +208,7 @@ class Connection(object):
         return self.last_response_soup
 
     def pack(self, response, async=False):
-        soup = beautifulsoup(response.text)
+        soup = beautifulsoup(response.text,'html.parser')
         if async:
             response.close()
         return soup
