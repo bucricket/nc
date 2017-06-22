@@ -49,12 +49,9 @@ class api(core.api):
         self.translate(single, 'south', float, 'slat', str)
         self.translate(single, 'west', float, 'wlon', str)
         self.translate(single, 'east', float, 'elon', str)
-        self.translate(multiple, 'coverage', direct, 'Coverage', direct)
-        self.translate(multiple, 'schedule', direct, 'Satellite Schedule',
-                       direct)
-        self.translate(multiple, 'satellite', direct, 'Satellite', direct)
-        self.translate(multiple, 'channel', int, 'chan_%s' % self.name, str)
+        self.translate(multiple, 'datatype', direct, 'Datatype', direct)
         self.translate(single, 'format', direct, 'format_%s' % self.name, str)
+        self.translate(multiple, 'channel', int, 'chan_%s' % self.name, str)
 
     def subscribe_get_append_orders(self, noaa, d, append_files, hours, async):
         page = noaa.get('order_list?display_id=%s&order_type=SUBS&'
